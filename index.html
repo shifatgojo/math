@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ম্যাথ জিনিয়াস চ্যালেঞ্জ 🧠</title>
+    <style>
+        /* গ্লোবাল স্টাইল এবং ব্যাকগ্রাউন্ড */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e1b4b);
+            color: #f8fafc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* প্রধান কুইজ কার্ড */
+        .quiz-container {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            max-width: 650px;
+            width: 100%;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        /* হেডার এবং প্রোগ্রেস বার */
+        h1 {
+            font-size: 28px;
+            color: #38bdf8;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(56, 189, 248, 0.3);
+        }
+
+        .progress-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            background: #334155;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .progress-bar-fill {
+            height: 6px;
+            background: #38bdf8;
+            border-radius: 10px;
+            width: 5%;
+            transition: width 0.4s ease;
+            margin-top: 5px;
+        }
+
+        /* প্রশ্ন বক্স */
+        .question-box {
+            font-size: 20px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            text-align: left;
+            background: rgba(15, 23, 42, 0.5);
+            padding: 25px;
+            border-radius: 16px;
+            border-left: 6px solid #38bdf8;
+        }
+
+        /* অপশন বাটনের স্টাইল */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .option-btn {
+            background: #334155;
+            color: #f8fafc;
+            border: 2px solid transparent;
+            padding: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .option-btn:hover {
+            background: #475569;
+            border-color: #38bdf8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(56, 189, 248, 0.2);
+        }
+
+        /* কন্ট্রোল বাটন (Next/Hint) */
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+        }
+
+        .control-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .hint-btn {
+            background: #eab308;
+            color: #0f172a;
+        }
+
+        .hint-btn:hover { background: #fde047; }
+
+        .next-btn {
+            background: #22c55e;
+            color: white;
+            display: none; /* প্রথমে লুকানো থাকবে */
+        }
+
+        .next-btn:hover { background: #4ade80; }
+
+        /* হিন্ট টেক্সট */
+        .hint-text {
+            display: none;
+            margin-top: 15px;
+            padding: 12px;
+            background: rgba(234, 179, 8, 0.1);
+            border: 1px dashed #eab308;
+            border-radius: 10px;
+            color: #fde047;
+            font-size: 15px;
+            text-align: left;
+        }
+
+        /* রেজাল্ট স্ক্রিন */
+        .result-screen {
+            display: none;
+        }
+
+        .result-screen h2 {
+            font-size: 32px;
+            color: #22c55e;
+            margin-bottom: 15px;
+        }
+
+        .score-text {
+            font-size: 24px;
+            margin-bottom: 25px;
+        }
+
+        .restart-btn {
+            background: #38bdf8;
+            color: #0f172a;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .restart-btn:hover {
+            background: #7dd3fc;
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.5);
+        }
+
+        /* রেসপন্সিভ ডিজাইন */
+        @media (max-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr;
+            }
+            .quiz-container {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="quiz-container">
+        <!-- গেম বা কুইজ স্ক্রিন -->
+        <div id="quiz-screen">
+            <h1>🍎 ম্যাথ জিনিয়াস ২০-ধাপ চ্যালেঞ্জ 🍏</h1>
+            <div class="progress-container">
+                <span id="progress-text">প্রশ্ন: ১/২০</span>
+                <span id="score-display">স্কোর: ০</span>
+            </div>
+            <div class="progress-bar-fill" id="bar-fill"></div>
+
+            <div class="question-box" id="question-text">
+                Loading Question...
+            </div>
+
+            <div class="options-grid" id="options-container">
+                <!-- অপশন বাটনগুলো জাভাস্ক্রিপ্ট দিয়ে আসবে -->
+            </div>
+
+            <div class="controls">
+                <button class="control-btn hint-btn" onclick="toggleHint()">💡 হিন্ট নিন</button>
+                <button class="control-btn next-btn" id="next-button" onclick="nextQuestion()">পরবর্তী প্রশ্ন ➡️</button>
+            </div>
+            <div class="hint-text" id="hint-box">💡 হিন্ট লোড হচ্ছে...</div>
+        </div>
+
+        <!-- রেজাল্ট স্ক্রিন -->
+        <div id="result-screen" class="result-screen">
+            <h2>🎉 চ্যালেঞ্জ সমাপ্ত! 🏆</h2>
+            <p class="score-text">আপনার মোট স্কোর: <span id="final-score">০</span> / ২০</p>
+            <p id="performance-feedback" style="margin-bottom: 30px; font-size: 18px; color: #94a3b8;"></p>
+            <button class="restart-btn" onclick="restartQuiz()">আবার খেলুন 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        // ২০টি ভিন্ন লেভেলের ক্রমান্বয়ে কঠিন প্রশ্ন ডাটাবেস
+        const quizData = [
+            { q: "আপনার কাছে ১টি আপেল আছে। আমি আপনাকে আরও x টি আপেল দিলাম। এখন আপনার কাছে মোট ৩টি আপেল থাকলে, x এর মান কত? 🍎", options: ["2", "1", "3", "4"], correct: 0, hint: "সহজ সমীকরণ: 1 + x = 3।" },
+            { q: "আপনার কাছে ১টি আপেল দরকার ছিল। আমি আপনাকে x টি আপেল দেওয়ার পর আপনার মোট আপেল হলো প্রয়োজনের ৩ গুণ। x এর মান কত? 🍏", options: ["3", "2", "1", "4"], correct: 1, hint: "প্রয়োজন ১টি হলে মোট আপেল হবে ৩টি। তাহলে আমি কয়টি দিলাম?" },
+            { q: "আপনার কাছে ১টি আপেল আছে। আমি আপনাকে আরও কিছু আপেল দেওয়ার পর মোট আপেলের সংখ্যা হলো x। যদি x² = 16 হয়, তবে আমি আপনাকে কয়টি আপেল দিয়েছিলাম? 🍎", options: ["4", "2", "3", "5"], correct: 2, hint: "কোন সংখ্যার বর্গ ১৬ তা বের করুন, তারপর আগের ১টি আপেল বিয়োগ করুন।" },
+            { q: "আপনার ১টি আপেল দরকার ছিল। আমি আপনাকে আরও x টি আপেল দিলাম। এখন আপনার মোট আপেলের বর্গ থেকে ১ বিয়োগ করলে ৮ পাওয়া যায়। x এর মান কত? 🍏", options: ["3", "2", "1", "4"], correct: 1, hint: "কোন সংখ্যার বর্গ থেকে ১ বিয়োগ করলে ৮ হয় তা ভাবুন।" },
+            { q: "আপনার কাছে ১টি আপেল আছে। আমি আপনাকে x টি আপেল দিলাম। এখন আপনার মোট আপেলের সংখ্যার ৩ গুণ, আপেলের বর্গের সমান। x এর মান কত? 🍎", options: ["3", "1", "2", "0"], correct: 2, hint: "কোন অ-শূন্য সংখ্যার ৩ গুণ তার বর্গের সমান?" },
+            { q: "আপনার ১টি আপেল দরকার ছিল। আমি আপনাকে আরও কিছু আপেল দেওয়ার পর মোট আপেল হলো x। যদি x² - 2x = 3 হয়, তবে আমি আপনাকে কয়টি আপেল দিয়েছিলাম? 🍏", options: ["3", "2", "1", "4"], correct: 1, hint: "মিডল টার্ম ব্রেকিং বা উৎপাদকে বিশ্লেষণ করে x এর মান বের করুন।" },
+            { q: "আপনার ১টি আপেল ছিল। আমি আপনাকে x টি আপেল দিলাম। এখন আপনার মোট আপেলের বর্গের সাথে ৮ যোগ করলে, মোট আপেলের ৬ গুণের সমান হয়। আমি আপনাকে কয়টি আপেল দিয়েছিলাম? 🍎", options: ["1 বা 4", "2 বা 3", "1 বা 3", "5"], correct: 2, hint: "সমীকরণটি সাজান: M² - 6M + 8 = 0 এবং M এর দুটি মান বের করুন।" },
+            { q: "আপনার কাছে ১টি আপেল ছিল। আমি আপনাকে কিছু আপেল দেওয়ার পর মোট আপেল হলো x। যদি x এর ঘন (cube) থেকে মোট আপেলের ৩ গুণ বিয়োগ করলে ২ থাকে, তবে আমি আপনাকে কয়টি আপেল দিয়েছিলাম? 🍏", options: ["1", "2", "3", "0"], correct: 0, hint: "যদি মোট আপেল ২ হয়, তবে 2³ - 3(2) = 8 - 6 = 2 হয়।" },
+            { q: "আপনার কাছে ১টি আপেল আছে। আমি আপনাকে আরও কিছু আপেল দিলাম। এখন আপনার মোট আপেলের সংখ্যাকে যদি তার উল্টো বা বিপরীত সংখ্যা (reciprocal) দিয়ে যোগ করা হয়, তবে যোগফল হয় ১০/৩। আমি আপনাকে কয়টি আপেল দিয়েছিলাম? 🍎", options: ["3", "2", "1", "4"], correct: 1, hint: "ভগ্নাংশ ১০/৩ কে মিশ্র ভগ্নাংশে রূপান্তর করলে দাঁড়ায় ৩ + ১/৩।" },
+            { q: "আপনার ১টি আপেল ছিল। আমি আপনাকে আরও কিছু আপেল দেওয়ার পর মোট আপেল হলো x। যদি x² - 5x + 6 = 0 হয়, তবে আমি আপনাকে সর্বোচ্চ কয়টি আপেল দিয়েছিলাম? 🍏", options: ["3", "1", "2", "4"], correct: 2, hint: "উৎপাদকে বিশ্লেষণ করে x এর বড় মানটি নিন (যা ৩) এবং তা থেকে ১ বিয়োগ করুন।" },
+            { q: "আপনার কাছে ১টি আপেল আছে। আমি আপনাকে y টি আপেল দেওয়ার পর মোট আপেল হলো x। যদি x² - y² = 7 হয়, তবে আমি আপনাকে কয়টি আপেল দিয়েছিলাম? 🍎", options: ["4", "3", "2", "1"], correct: 1, hint: "বীজগণিতের সূত্র a² - b² = (a+b)(a-b) ব্যবহার করুন এবং মনে রাখবেন x - y = 1।" },
+            { q: "আপনার ১টি আপেল ছিল। আমি আপনাকে কিছু আপেল দেওয়ার পর মোট আপেল হলো x। যদি √x + 1/√x = 2 হয়, তবে আমি আপনাকে কয়টি আপেল দিয়েছিলাম? 🍏", options: ["1", "0", "2", "3"], correct: 1, hint: "কোন সংখ্যার বর্গমূল এবং তার বিপরীতের যোগফল ২ হয় তা চিন্তা করুন।" },
+            { q: "আপনার কাছে ১টি আপেল ছিল। আমি আপনাকে x টি আপেল দিলাম। এখন আপনার মোট আপেলের লগের মান (base 2) যদি ২ হয়, তবে আমি আপনাকে কয়টি আপেল দিয়েছিলাম? 🍎", options: ["4", "2", "3", "1"], correct: 2, hint: "log₂(মোট আপেল) = 2 হলে মোট আপেলের সংখ্যা কত হবে?" },
+            { q: "আপনার ১টি আপেল ছিল। আমি আপনাকে কিছু আপেল দিলাম। এখন মোট আপেলের সংখ্যা এমন একটি মৌলিক সংখ্যা যা ১০ এর চেয়ে ছোট এবং যার সাথে ২ যোগ করলেও একটি মৌলিক সংখ্যা পাওয়া যায়। আমি আপনাকে সর্বোচ্চ কয়টি আপেল দিতে পারি? 🍏", options: ["6", "2", "4", "8"], correct: 2, hint: "১০ এর নিচের মৌলিক সংখ্যাগুলো পরীক্ষা করুন: ৩ (+২ = ৫) এবং ৫ (+২ = ৭)। বড়টি বেছে নিন।" },
+            { q: "আপনার কাছে ১টি আপেল ছিল। আমি আপনাকে x টি আপেল দিলাম। এখন মোট আপেলকে যদি ৩টি করে গ্রুপ করা হয় তবে ১টি অবশিষ্ঠ থাকে, আর ৪টি করে গ্রুপ করলে কোনো অবশিষ্ঠ থাকে না। যদি মোট আপেল ১০টির কম হয়, তবে x এর মান কত? 🍎", options: ["7", "3", "4", "2"], correct: 1, hint: "১০ এর নিচে এমন একটি সংখ্যা খুঁজুন যা ৪ দ্বারা বিভাজ্য কিন্তু ৩ দ্বারা ভাগ করলে ভাগশেষ ১ থাকে।" },
+            { q: "আপনার ১টি আপেল ছিল। আমি আপনাকে x টি আপেল দিলাম। এখন আপনার মোট আপেলের সংখ্যার গুণনীয়ক বা উৎপাদক (factors) এর সংখ্যা ঠিক ৩টি। যদি মোট আপেল ১০ এর নিচে হয়, তবে x এর মান কত? 🍏", options: ["8", "1", "3", "5"], correct: 2, hint: "যেসব সংখ্যার ঠিক ৩টি গুণনীয়ক থাকে তারা হলো পূর্ণ বর্গ মৌলিক সংখ্যা (যেমন: ৪)।" },
+            { q: "আপনার কাছে ১টি আপেল আছে। আমি আপনাকে আরও কিছু আপেল দেওয়ার পর মোট আপেল হলো x। যদি x³ - 6x² + 11x - 6 = 0 সমীকরণের সবচেয়ে বড় মূলটি (root) মোট আপেলের সংখ্যা নির্দেশ করে, তবে আমি আপনাকে কয়টি আপেল দিয়েছিলাম? 🍎", options: ["3", "1", "2", "0"], correct: 2, hint: "এই ত্রিঘাত সমীকরণটির মূলগুলো হলো ১, ২, ৩। সবচেয়ে বড় মূলটি হলো ৩।" },
+            { q: "আপনার ১টি আপেল ছিল। আমি আপনাকে x টি আপেল দিলাম। এখন আপনার মোট আপেলের সংখ্যা একটি সমকোণী ত্রিভুজের অতিভুজ (hypotenuse) নির্দেশ করে যার অন্য দুটি বাহু ৩ এবং ৪। x এর মান কত? 🍏", options: ["5", "3", "4", "2"], correct: 2, hint: "পিথাগোরাসের সূত্রানুযায়ী অতিভুজ = √(3² + 4²) = ৫।" },
+            { q: "আপনার কাছে ১টি আপেল ছিল। আমি আপনাকে কিছু আপেল দেওয়ার পর মোট আপেল হলো x। যদি x এর মান এই অসীম ধারাটি নির্দেশ করে: √(6 + √(6 + √(6 + ...))), তবে আমি আপনাকে কয়টি আপেল দিয়েছিলাম? 🍎", options: ["3", "1", "2", "4"], correct: 2, hint: "ধারাটিকে x = √(6 + x) লিখে উভয় পক্ষকে বর্গ করে সমাধান করুন।" },
+            { q: "আপনার ১টি আপেল ছিল। আমি আপনাকে x টি আপেল দিলাম। এখন আপনার মোট আপেলের সংখ্যা হলো এমন একটি ক্ষুদ্রতম ধনাত্মক পূর্ণসংখ্যা, যাকে ২, ৩, ৪, ৫ এবং ৬ দ্বারা ভাগ করলে প্রতিক্ষেত্রে ১ অবশিষ্ট থাকে, কিন্তু ৭ দ্বারা ভাগ করলে কোনো অবশিষ্ট থাকে না। x এর মান কত? 🍏", options: ["60", "120", "300", "299"], correct: 2, hint: "২, ৩, ৪, ৫, ৬ এর লসাগু হলো ৬০। সংখ্যাটি ৬০ এর গুণিতক + ১ হবে যা ৭ দিয়ে মেষে (৩০১)।" }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        // প্রশ্ন লোড করার ফাংশন
+        function loadQuestion() {
+            const currentQuestion = quizData[currentQuestionIndex];
+            
+            // টেক্সট এবং প্রোগ্রেস আপডেট
+            document.getElementById("question-text").innerText = `${currentQuestionIndex + 1}. ${currentQuestion.q}`;
+            document.getElementById("progress-text").innerText = `প্রশ্ন: ${currentQuestionIndex + 1}/${quizData.length}`;
+            document.getElementById("score-display").innerText = `স্কোর: ${score}`;
+            document.getElementById("hint-box").innerText = `💡 হিন্ট: ${currentQuestion.hint}`;
+            document.getElementById("hint-box").style.display = "none"; // হিন্ট বন্ধ রাখা
+            document.getElementById("next-button").style.display = "none"; // নেক্সট বাটন লুকানো
+
+            // প্রোগ্রেস বার অ্যানিমেশন
+            const progressPercent = ((currentQuestionIndex + 1) / quizData.length) * 100;
+            document.getElementById("bar-fill").style.width = `${progressPercent}%`;
+
+            // অপশন বাটন তৈরি
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+
+            currentQuestion.options.forEach((option, index) => {
+                const button = document.createElement("button");
+                button.classList.add("option-btn");
+                button.innerText = option;
+                button.onclick = () => selectOption(index, button);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        // অপশন সিলেক্ট করার লজিক
+        function selectOption(selectedIndex, clickedButton) {
+            const currentQuestion = quizData[currentQuestionIndex];
+            const allButtons = document.querySelectorAll(".option-btn");
+
+            // একবার উত্তর দিলে বাকি বাটন ডিসেবল করা
+            allButtons.forEach(btn => btn.disabled = true);
+
+            if (selectedIndex === currentQuestion.correct) {
+                clickedButton.style.background = "#22c55e"; // সঠিক হলে সবুজ
+                clickedButton.style.borderColor = "#22c55e";
+                score++;
+                document.getElementById("score-display").innerText = `স্কোর: ${score}`;
+            } else {
+                clickedButton.style.background = "#ef4444"; // ভুল হলে লাল
+                clickedButton.style.borderColor = "#ef4444";
+                // সঠিক উত্তরটি সবুজ করে দেখানো
+                allButtons[currentQuestion.correct].style.background = "#22c55e";
+            }
+
+            // নেক্সট বাটন প্রদর্শন
+            document.getElementById("next-button").style.display = "block";
+        }
+
+        // পরবর্তী প্রশ্নে যাওয়া
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        // হিন্ট টগল করা
+        function toggleHint() {
+            const hintBox = document.getElementById("hint-box");
+            hintBox.style.display = hintBox.style.display === "none" ? "block" : "none";
+        }
+
+        // কুইজ শেষে রেজাল্ট দেখানো
+        function showResults() {
+            document.getElementById("quiz-screen").style.display = "none";
+            document.getElementById("result-screen").style.display = "block";
+            document.getElementById("final-score").innerText = score;
+
+            let feedback = "";
+            if (score === 20) feedback = "অবিশ্বাস্য! আপনি একজন খাঁটি ম্যাথ জিনিয়াস! 👑🔥";
+            else if (score >= 15) feedback = "চমৎকার পারফরম্যান্স! আপনার লজিক খুব স্ট্রং। 💪✨";
+            else if (score >= 10) feedback = "ভালো চেষ্টা! আর একটু অনুশীলন করলেই দারুণ করবেন। 👍";
+            else feedback = "আবার চেষ্টা করুন! গণিত চর্চায় পারফেক্ট হওয়া যায়। 🌟";
+            
+            document.getElementById("performance-feedback").innerText = feedback;
+        }
+
+        // কুইজ রিস্টার্ট করা
+        function restartQuiz() {
+            currentQuestionIndex = 0;
+            score = 0;
+            document.getElementById("quiz-screen").style.display = "block";
+            document.getElementById("result-screen").style.display = "none";
+            loadQuestion();
+        }
+
+        // অ্যাপ চালু করার সময় প্রথম প্রশ্ন লোড করা
+        window.onload = loadQuestion;
+    </script>
+</body>
+</html>
